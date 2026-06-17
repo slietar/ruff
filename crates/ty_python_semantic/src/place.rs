@@ -31,7 +31,7 @@ pub(crate) use implicit_globals::{
 };
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, get_size2::GetSize)]
-pub(crate) enum Definedness {
+pub enum Definedness {
     AlwaysDefined,
     PossiblyUndefined,
 }
@@ -50,7 +50,7 @@ impl Definedness {
 }
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, get_size2::GetSize)]
-pub(crate) enum TypeOrigin {
+pub enum TypeOrigin {
     Declared,
     Inferred,
 }
@@ -74,7 +74,7 @@ impl TypeOrigin {
 /// we store the raw inferred type and lazily apply the public-type policy when
 /// converting the place into a public lookup result.
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Default, get_size2::GetSize)]
-pub(crate) enum PublicTypePolicy {
+pub enum PublicTypePolicy {
     /// Public lookup should expose the raw stored type.
     #[default]
     Raw,
@@ -94,11 +94,11 @@ impl PublicTypePolicy {
 
 /// A defined place with its raw type, origin, definedness, and public-type policy.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, salsa::Update, get_size2::GetSize)]
-pub(crate) struct DefinedPlace<'db> {
-    pub(crate) ty: Type<'db>,
-    pub(crate) origin: TypeOrigin,
-    pub(crate) definedness: Definedness,
-    pub(crate) public_type_policy: PublicTypePolicy,
+pub struct DefinedPlace<'db> {
+    pub ty: Type<'db>,
+    pub origin: TypeOrigin,
+    pub definedness: Definedness,
+    pub public_type_policy: PublicTypePolicy,
 }
 
 impl<'db> DefinedPlace<'db> {
@@ -161,7 +161,7 @@ impl<'db> DefinedPlace<'db> {
 /// non_existent:        Place::Undefined,
 /// ```
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, salsa::Update, get_size2::GetSize)]
-pub(crate) enum Place<'db> {
+pub enum Place<'db> {
     Defined(DefinedPlace<'db>),
     #[default]
     Undefined,
@@ -186,7 +186,7 @@ impl<'db> Place<'db> {
     ///
     /// If the place is *definitely* undefined, this function will return `None`. Otherwise,
     /// if there is at least one control-flow path where the place is defined, return the type.
-    pub(crate) fn ignore_possibly_undefined(&self) -> Option<Type<'db>> {
+    pub fn ignore_possibly_undefined(&self) -> Option<Type<'db>> {
         match self {
             Place::Defined(defined) => Some(defined.ty),
             Place::Undefined => None,
@@ -434,7 +434,7 @@ pub(crate) fn global_symbol<'db>(
 /// For stub files, explicit re-export will be required, while for non-stub files, it will not.
 ///
 /// `None` should be passed for the `file` parameter if looking up a symbol on a namespace package.
-pub(crate) fn imported_symbol<'db>(
+pub fn imported_symbol<'db>(
     db: &'db dyn Db,
     file: Option<File>,
     name: &str,
@@ -670,9 +670,9 @@ impl<'db> PlaceFromDeclarationsResult<'db> {
 ///
 /// [`CLASS_VAR`]: crate::types::TypeQualifiers::CLASS_VAR
 #[derive(Debug, Clone, Default, Copy, PartialEq, Eq, salsa::Update, get_size2::GetSize)]
-pub(crate) struct PlaceAndQualifiers<'db> {
-    pub(crate) place: Place<'db>,
-    pub(crate) qualifiers: TypeQualifiers,
+pub struct PlaceAndQualifiers<'db> {
+    pub place: Place<'db>,
+    pub qualifiers: TypeQualifiers,
 }
 
 impl<'db> PlaceAndQualifiers<'db> {
@@ -2041,7 +2041,7 @@ pub(crate) fn class_body_implicit_symbol<'db>(
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub(crate) enum RequiresExplicitReExport {
+pub enum RequiresExplicitReExport {
     Yes,
     No,
 }

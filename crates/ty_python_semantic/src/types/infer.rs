@@ -242,7 +242,7 @@ fn deferred_cycle_initial<'db>(
 ///
 /// Unlike [`infer_scope_types`], this function does not take a type context, as it may infer
 /// the parent scope to obtain the necessary type context by which to infer the inner scope.
-pub(crate) fn infer_complete_scope_types<'db>(
+pub fn infer_complete_scope_types<'db>(
     db: &'db dyn Db,
     scope: ScopeId<'db>,
 ) -> &'db ScopeInference<'db> {
@@ -686,7 +686,7 @@ impl<'db> InferenceRegion<'db> {
 
 /// The inferred types for a scope region.
 #[derive(Debug, Eq, PartialEq, salsa::Update, get_size2::GetSize)]
-pub(crate) struct ScopeInference<'db> {
+pub struct ScopeInference<'db> {
     /// The types of every expression in this region.
     expressions: FxHashMap<ExpressionNodeKey, Type<'db>>,
 

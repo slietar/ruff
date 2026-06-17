@@ -51,7 +51,7 @@ mod db;
 mod dunder_all;
 mod fixes;
 pub mod lint;
-pub(crate) mod place;
+pub mod place;
 mod reachability;
 mod semantic_model;
 mod subscript;

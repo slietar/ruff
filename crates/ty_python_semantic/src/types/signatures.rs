@@ -482,7 +482,7 @@ pub struct Signature<'db> {
     parameters: Parameters<'db>,
 
     /// Return type. If no annotation was provided, this is `Unknown`.
-    pub(crate) return_ty: Type<'db>,
+    pub return_ty: Type<'db>,
 }
 
 /// Whether one callable signature's parameters are compatible with another's.
@@ -820,7 +820,7 @@ impl<'db> Signature<'db> {
     }
 
     /// Return the parameters in this signature.
-    pub(crate) fn parameters(&self) -> &Parameters<'db> {
+    pub fn parameters(&self) -> &Parameters<'db> {
         &self.parameters
     }
 
@@ -2971,7 +2971,7 @@ pub(crate) enum ParametersKind<'db> {
 // between the `value` and `kind` field, it would be better to structure it such that these
 // invariants are followed at the type level instead.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, salsa::Update, get_size2::GetSize)]
-pub(crate) struct Parameters<'db> {
+pub struct Parameters<'db> {
     // TODO: use SmallVec here once invariance bug is fixed
     value: Vec<Parameter<'db>>,
     kind: ParametersKind<'db>,
@@ -3452,7 +3452,7 @@ impl<'db> Parameters<'db> {
         self.value.len()
     }
 
-    pub(crate) fn iter(&self) -> std::slice::Iter<'_, Parameter<'db>> {
+    pub fn iter(&self) -> std::slice::Iter<'_, Parameter<'db>> {
         self.value.iter()
     }
 
@@ -3590,7 +3590,7 @@ impl<'db> std::ops::Index<usize> for Parameters<'db> {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, salsa::Update, get_size2::GetSize)]
-pub(crate) struct Parameter<'db> {
+pub struct Parameter<'db> {
     /// Annotated type of the parameter. If no annotation was provided, this is `Unknown`.
     annotated_type: Type<'db>,
 
@@ -3612,7 +3612,7 @@ pub(crate) struct Parameter<'db> {
     /// Syntax-level annotation kind for cases where the annotation has special parameter semantics.
     annotation_kind: ParameterAnnotationKind,
 
-    kind: ParameterKind<'db>,
+    pub kind: ParameterKind<'db>,
     pub(crate) form: ParameterForm,
 }
 
@@ -3966,7 +3966,7 @@ impl<'db> Parameter<'db> {
     }
 
     /// Annotated type of the parameter. If no annotation was provided, this is `Unknown`.
-    pub(crate) fn annotated_type(&self) -> Type<'db> {
+    pub fn annotated_type(&self) -> Type<'db> {
         self.annotated_type
     }
 

@@ -213,8 +213,8 @@ impl<'db> CodeGeneratorKind<'db> {
 /// A specialization of a generic class with a particular assignment of types to typevars.
 #[salsa::interned(debug, heap_size=ruff_memory_usage::heap_size)]
 pub struct GenericAlias<'db> {
-    pub(crate) origin: StaticClassLiteral<'db>,
-    pub(crate) specialization: Specialization<'db>,
+    pub origin: StaticClassLiteral<'db>,
+    pub specialization: Specialization<'db>,
 }
 
 pub(super) fn walk_generic_alias<'db, V: super::visitor::TypeVisitor<'db> + ?Sized>(
@@ -364,7 +364,7 @@ impl<'db> ClassLiteral<'db> {
     }
 
     /// Returns the name of the class.
-    pub(crate) fn name(self, db: &'db dyn Db) -> &'db ast::name::Name {
+    pub fn name(self, db: &'db dyn Db) -> &'db ast::name::Name {
         match self {
             Self::Static(class) => class.name(db),
             Self::Dynamic(class) => class.name(db),
@@ -386,7 +386,7 @@ impl<'db> ClassLiteral<'db> {
     }
 
     /// Returns an iterator over the MRO.
-    pub(crate) fn iter_mro(self, db: &'db dyn Db) -> MroIterator<'db> {
+    pub fn iter_mro(self, db: &'db dyn Db) -> MroIterator<'db> {
         MroIterator::new(db, self, None)
     }
 
@@ -607,7 +607,7 @@ impl<'db> ClassLiteral<'db> {
     }
 
     /// Returns the definition of this class, if available.
-    pub(crate) fn definition(self, db: &'db dyn Db) -> Option<Definition<'db>> {
+    pub fn definition(self, db: &'db dyn Db) -> Option<Definition<'db>> {
         match self {
             Self::Static(class) => Some(class.definition(db)),
             Self::Dynamic(class) => class.definition(db),
@@ -883,7 +883,7 @@ impl<'db> ClassType<'db> {
     ///
     /// For a non-generic class, this returns the class literal directly.
     /// For a generic alias, this returns the alias's origin.
-    pub(crate) fn class_literal(self, db: &'db dyn Db) -> ClassLiteral<'db> {
+    pub fn class_literal(self, db: &'db dyn Db) -> ClassLiteral<'db> {
         match self {
             Self::NonGeneric(literal) => literal,
             Self::Generic(generic) => ClassLiteral::Static(generic.origin(db)),
@@ -951,7 +951,7 @@ impl<'db> ClassType<'db> {
         }
     }
 
-    pub(crate) fn name(self, db: &'db dyn Db) -> &'db Name {
+    pub fn name(self, db: &'db dyn Db) -> &'db Name {
         self.class_literal(db).name(db)
     }
 

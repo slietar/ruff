@@ -104,8 +104,8 @@ mod bool;
 mod bound_super;
 mod call;
 mod callable;
-mod class;
-mod class_base;
+pub mod class;
+pub mod class_base;
 mod constraints;
 mod context;
 mod context_manager;
@@ -113,18 +113,18 @@ mod cyclic;
 mod diagnostic;
 mod display;
 mod enums;
-mod function;
+pub mod function;
 mod generics;
 pub mod ide_support;
-mod infer;
-mod instance;
+pub mod infer;
+pub mod instance;
 mod iteration;
 mod known_instance;
 pub mod list_members;
 mod literal;
 mod member;
 mod method;
-mod mro;
+pub mod mro;
 pub(crate) mod narrow;
 mod newtype;
 mod overrides;
@@ -132,7 +132,7 @@ mod protocol_class;
 pub(crate) mod relation;
 mod relation_error;
 mod set_theoretic;
-mod signatures;
+pub mod signatures;
 mod special_form;
 mod string_annotation;
 mod subclass_of;
@@ -3157,7 +3157,7 @@ impl<'db> Type<'db> {
     /// TODO: We should return a `Result` here to handle errors that can appear during attribute
     /// lookup, like a failed `__get__` call on a descriptor.
     #[must_use]
-    pub(crate) fn member(self, db: &'db dyn Db, name: &str) -> PlaceAndQualifiers<'db> {
+    pub fn member(self, db: &'db dyn Db, name: &str) -> PlaceAndQualifiers<'db> {
         self.member_lookup_with_policy(db, name.into(), MemberLookupPolicy::default())
     }
 

@@ -165,7 +165,7 @@ impl<'db> Type<'db> {
 pub struct NominalInstanceType<'db>(
     // Keep this field private, so that the only way of constructing `NominalInstanceType` instances
     // is through the `Type::instance` constructor function.
-    NominalInstanceInner<'db>,
+    pub NominalInstanceInner<'db>,
 );
 
 pub(super) fn walk_nominal_instance_type<'db, V: super::visitor::TypeVisitor<'db> + ?Sized>(
@@ -598,7 +598,7 @@ impl<'c, 'db> DisjointnessChecker<'_, 'c, 'db> {
 /// optimization to avoid having to materialize the [`ClassType`] for tuple
 /// instances where it would be unnecessary (this is somewhat expensive!).
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, salsa::Update, get_size2::GetSize)]
-enum NominalInstanceInner<'db> {
+pub enum NominalInstanceInner<'db> {
     /// An instance of `object`.
     ///
     /// We model it with a dedicated enum variant since its use as "the type of all values" is so

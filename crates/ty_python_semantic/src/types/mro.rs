@@ -34,7 +34,7 @@ use itertools::Itertools;
 ///
 /// See [`ClassType::iter_mro`] for more details.
 #[derive(PartialEq, Eq, Clone, Debug, salsa::Update, get_size2::GetSize)]
-pub(crate) struct Mro<'db>(Box<[ClassBase<'db>]>);
+pub struct Mro<'db>(Box<[ClassBase<'db>]>);
 
 impl<'db> Mro<'db> {
     /// Attempt to resolve the MRO of a given class. Because we derive the MRO from the list of
@@ -561,7 +561,7 @@ impl<'db> FromIterator<ClassBase<'db>> for Mro<'db> {
 /// loading the cached MRO comes with a certain amount of overhead, so it's best to avoid calling the
 /// Salsa-tracked [`StaticClassLiteral::try_mro`] method unless it's absolutely necessary.
 #[derive(Clone)]
-pub(crate) struct MroIterator<'db> {
+pub struct MroIterator<'db> {
     db: &'db dyn Db,
 
     /// The class whose MRO we're iterating over
@@ -690,7 +690,7 @@ impl DoubleEndedIterator for MroIterator<'_> {
 }
 
 #[derive(Debug, PartialEq, Eq, salsa::Update, get_size2::GetSize)]
-pub(super) struct StaticMroError<'db> {
+pub struct StaticMroError<'db> {
     kind: StaticMroErrorKind<'db>,
     fallback_mro: Mro<'db>,
 }

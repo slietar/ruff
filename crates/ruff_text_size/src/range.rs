@@ -15,8 +15,8 @@ use {
 #[cfg_attr(feature = "get-size", derive(get_size2::GetSize))]
 pub struct TextRange {
     // Invariant: start <= end
-    start: TextSize,
-    end: TextSize,
+    pub start: TextSize,
+    pub end: TextSize,
 }
 
 impl fmt::Debug for TextRange {

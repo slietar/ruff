@@ -397,7 +397,7 @@ pub(crate) fn symbols_for_file(db: &dyn Db, file: File) -> FlatSymbols {
     cycle_initial=symbols_for_file_global_only_cycle_initial,
     heap_size=ruff_memory_usage::heap_size,
 )]
-pub(crate) fn symbols_for_file_global_only(db: &dyn Db, file: File) -> FlatSymbols {
+pub fn symbols_for_file_global_only(db: &dyn Db, file: File) -> FlatSymbols {
     let parsed = parsed_module(db, file);
     let module = parsed.load(db);
 

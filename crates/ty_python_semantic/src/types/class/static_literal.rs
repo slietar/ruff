@@ -74,7 +74,7 @@ pub struct StaticClassLiteral<'db> {
     #[returns(ref)]
     pub(crate) name: Name,
 
-    pub(crate) body_scope: ScopeId<'db>,
+    pub body_scope: ScopeId<'db>,
 
     pub(crate) known: Option<KnownClass>,
 
@@ -580,7 +580,7 @@ impl<'db> StaticClassLiteral<'db> {
     ///
     /// [method resolution order]: https://docs.python.org/3/glossary.html#term-method-resolution-order
     #[salsa::tracked(returns(as_ref), cycle_initial=static_class_try_mro_cycle_initial, heap_size=ruff_memory_usage::heap_size)]
-    pub(crate) fn try_mro(
+    pub fn try_mro(
         self,
         db: &'db dyn Db,
         specialization: Option<Specialization<'db>>,

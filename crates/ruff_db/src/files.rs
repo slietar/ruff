@@ -599,7 +599,7 @@ impl std::error::Error for FileError {}
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct FileRange {
     file: File,
-    range: TextRange,
+    pub range: TextRange,
 }
 
 impl FileRange {

@@ -220,13 +220,13 @@ pub struct OverloadLiteral<'db> {
     pub(crate) known: Option<KnownFunction>,
 
     /// The scope that's created by the function, in which the function body is evaluated.
-    pub(crate) body_scope: ScopeId<'db>,
+    pub body_scope: ScopeId<'db>,
 
     /// A set of special decorators that were applied to this function
-    pub(crate) decorators: FunctionDecorators,
+    pub decorators: FunctionDecorators,
 
     /// If `Some` then contains the `@warnings.deprecated`
-    pub(crate) deprecated: Option<DeprecatedInstance<'db>>,
+    pub deprecated: Option<DeprecatedInstance<'db>>,
 
     /// The arguments to `dataclass_transformer`, if this function was annotated
     /// with `@dataclass_transformer(...)`.
@@ -254,7 +254,7 @@ impl<'db> OverloadLiteral<'db> {
         )
     }
 
-    fn file(self, db: &'db dyn Db) -> File {
+    pub fn file(self, db: &'db dyn Db) -> File {
         // NOTE: Do not use `self.definition(db).file(db)` here, as that could create a
         // cross-module dependency on the full AST.
         self.body_scope(db).file(db)
@@ -270,20 +270,20 @@ impl<'db> OverloadLiteral<'db> {
 
     /// Returns true if this overload is decorated with `@staticmethod`, or if it is implicitly a
     /// staticmethod.
-    pub(crate) fn is_staticmethod(self, db: &dyn Db) -> bool {
+    pub fn is_staticmethod(self, db: &dyn Db) -> bool {
         self.has_known_decorator(db, FunctionDecorators::STATICMETHOD)
             || is_implicit_staticmethod(self.name(db))
     }
 
     /// Returns true if this overload is decorated with `@classmethod`, or if it is implicitly a
     /// classmethod.
-    pub(crate) fn is_classmethod(self, db: &dyn Db) -> bool {
+    pub fn is_classmethod(self, db: &dyn Db) -> bool {
         self.has_known_decorator(db, FunctionDecorators::CLASSMETHOD)
             || is_implicit_classmethod(self.name(db))
     }
 
     /// Returns true if this overload has an implicit `self` or `cls` receiver parameter.
-    pub(crate) fn has_implicit_receiver(self, db: &'db dyn Db) -> bool {
+    pub fn has_implicit_receiver(self, db: &'db dyn Db) -> bool {
         self.body_scope(db).is_method_scope(db) && !self.is_staticmethod(db)
     }
 
@@ -419,7 +419,7 @@ impl<'db> OverloadLiteral<'db> {
     /// calling query is not in the same file as this function is defined in, then this will create
     /// a cross-module dependency directly on the full AST which will lead to cache
     /// over-invalidation.
-    pub(crate) fn signature(self, db: &'db dyn Db) -> Signature<'db> {
+    pub fn signature(self, db: &'db dyn Db) -> Signature<'db> {
         let mut signature = self.raw_signature(db);
 
         let scope = self.body_scope(db);
@@ -445,7 +445,7 @@ impl<'db> OverloadLiteral<'db> {
     /// calling query is not in the same file as this function is defined in, then this will create
     /// a cross-module dependency directly on the full AST which will lead to cache
     /// over-invalidation.
-    pub(super) fn raw_signature(self, db: &'db dyn Db) -> Signature<'db> {
+    pub fn raw_signature(self, db: &'db dyn Db) -> Signature<'db> {
         /// `self` or `cls` can be implicitly positional-only if:
         /// - It is a method AND
         /// - No parameters in the method use PEP-570 syntax AND
@@ -1000,7 +1000,7 @@ impl<'db> FunctionType<'db> {
         self.literal(db).last_definition.node(db, file, module)
     }
 
-    pub(crate) fn name(self, db: &'db dyn Db) -> &'db ast::name::Name {
+    pub fn name(self, db: &'db dyn Db) -> &'db ast::name::Name {
         self.literal(db).name(db)
     }
 
@@ -1117,7 +1117,7 @@ impl<'db> FunctionType<'db> {
 
     /// Returns all of the overload signatures and the implementation definition, if any, of this
     /// function. The overload signatures will be in source order.
-    pub(crate) fn overloads_and_implementation(
+    pub fn overloads_and_implementation(
         self,
         db: &'db dyn Db,
     ) -> (&'db [OverloadLiteral<'db>], Option<OverloadLiteral<'db>>) {
@@ -1157,7 +1157,7 @@ impl<'db> FunctionType<'db> {
         cycle_fn=|db, cycle, previous, value: CallableSignature<'db>, _| value.cycle_normalized(db, previous, cycle),
         heap_size=ruff_memory_usage::heap_size,
     )]
-    pub(crate) fn signature(self, db: &'db dyn Db) -> CallableSignature<'db> {
+    pub fn signature(self, db: &'db dyn Db) -> CallableSignature<'db> {
         self.updated_signature(db)
             .cloned()
             .unwrap_or_else(|| self.literal(db).signature(db))
@@ -1204,7 +1204,7 @@ impl<'db> FunctionType<'db> {
     }
 
     /// Convert the `FunctionType` into a [`BoundMethodType`].
-    pub(crate) fn into_bound_method_type(
+    pub fn into_bound_method_type(
         self,
         db: &'db dyn Db,
         self_instance: Type<'db>,
