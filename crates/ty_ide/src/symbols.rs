@@ -412,7 +412,7 @@ pub(crate) fn symbols_for_file(db: &dyn Db, file: ProgramFile<'_>) -> FlatSymbol
     cycle_initial=|_, _, _| FlatSymbols::default(),
     heap_size=ruff_memory_usage::heap_size,
 )]
-pub(crate) fn symbols_for_file_global_only(db: &dyn Db, file: ProgramFile<'_>) -> FlatSymbols {
+pub fn symbols_for_file_global_only(db: &dyn Db, file: ProgramFile<'_>) -> FlatSymbols {
     let parsed = parsed_module(db, file.python_file(db));
     // Auto-imports scan every module, so release closed files' ASTs as we go.
     let module = parsed.load_then_clear_on_drop(db);

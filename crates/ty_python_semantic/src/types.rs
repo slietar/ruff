@@ -160,6 +160,7 @@ mod instance;
 mod iteration;
 mod known_instance;
 pub mod list_members;
+pub mod extractor_api;
 mod literal;
 mod match_pattern;
 mod member;
