@@ -1,6 +1,21 @@
-use std::vec::Drain;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
 
-use drop_bomb::DebugDropBomb;
+use alloc::vec::Drain;
+
+
+/// Stand-in for `drop_bomb::DebugDropBomb`, which needs `std` to check whether
+/// the thread is panicking.
+#[derive(Debug)]
+struct DebugDropBomb;
+
+impl DebugDropBomb {
+    fn new(_message: &'static str) -> Self {
+        Self
+    }
+
+    fn defuse(&mut self) {}
+}
 use thin_vec::ThinVec;
 
 /// Reusable scratch storage that preserves entries belonging to outer parser frames.
@@ -74,7 +89,7 @@ impl<T> ScratchBuffer<T> {
 impl<T> Drop for ScratchBuffer<T> {
     fn drop(&mut self) {
         debug_assert!(
-            self.buffer.is_empty() || std::thread::panicking(),
+            self.buffer.is_empty(),
             "Scratch buffers must be empty when dropped."
         );
     }

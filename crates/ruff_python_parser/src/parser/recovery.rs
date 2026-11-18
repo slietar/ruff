@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use ruff_python_ast::name::Name;
 use ruff_python_ast::{self as ast, Expr, ExprContext, Pattern};
 use ruff_text_size::{Ranged, TextLen, TextRange};

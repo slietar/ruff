@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use unicode_ident::{is_xid_continue, is_xid_start};
 
 use ruff_text_size::{Ranged, TextLen, TextRange, TextSize};

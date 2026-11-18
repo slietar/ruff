@@ -1,8 +1,11 @@
 //! Functions related to adding and removing indentation from lines of
 //! text.
 
-use std::borrow::Cow;
-use std::cmp;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use alloc::borrow::Cow;
+use core::cmp;
 
 use ruff_source_file::UniversalNewlines;
 

@@ -1,5 +1,8 @@
 //! AST visitor trait and walk functions.
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 pub mod source_order;
 pub mod transformer;
 

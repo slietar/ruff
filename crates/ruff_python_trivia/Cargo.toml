@@ -1,26 +1,22 @@
 [package]
 name = "ruff_python_trivia"
 version = "0.0.22"
+edition = "2024"
 description = "This is an internal component crate of Ruff"
-authors = { workspace = true }
-edition = { workspace = true }
-rust-version = { workspace = true }
-homepage = { workspace = true }
-documentation = { workspace = true }
-repository = { workspace = true }
-license = { workspace = true }
 
 [lib]
 
 [dependencies]
-ruff_source_file = { workspace = true }
-ruff_text_size = { workspace = true }
+hashbrown = { version = "0.17.0", default-features = false, features = ["inline-more"] }
+ruff_source_file = { path = "../ruff_source_file" }
+ruff_text_size = { path = "../ruff_text_size" }
 
-itertools = { workspace = true }
-memchr = { workspace = true }
-rustc-hash = { workspace = true }
-unicode-ident = { workspace = true }
-unicode-normalization = { workspace = true }
+itertools = { version = "0.15.0", default-features = false, features = ["use_alloc"] }
+memchr = { version = "2.7.1", default-features = false, features = ["alloc"] }
+rustc-hash = { version = "2.0.0", default-features = false, features = [] }
+unicode-ident = { version = "1.0.12", default-features = false, features = [] }
+unicode-normalization = { version = "0.1.23", default-features = false, features = [] }
 
-[lints]
-workspace = true
+[lints.rust]
+# Features whose dependencies were removed in this copy (serde, salsa, ...).
+unexpected_cfgs = "allow"

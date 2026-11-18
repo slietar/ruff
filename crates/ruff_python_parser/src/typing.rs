@@ -1,5 +1,8 @@
 //! This module takes care of parsing a type annotation.
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use ruff_python_ast::relocate::relocate_expr;
 use ruff_python_ast::{Expr, ExprStringLiteral, ModExpression, StringLiteral};
 use ruff_text_size::Ranged;

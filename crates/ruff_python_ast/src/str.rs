@@ -1,6 +1,9 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use aho_corasick::{AhoCorasick, AhoCorasickKind, Anchored, Input, MatchKind, StartKind};
-use std::fmt;
-use std::sync::LazyLock;
+use core::fmt;
+use spin::Lazy as LazyLock;
 
 use ruff_text_size::{TextLen, TextRange};
 

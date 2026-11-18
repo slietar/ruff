@@ -1,7 +1,10 @@
-use std::borrow::{Borrow, Cow};
-use std::fmt::{Debug, Display, Formatter, Write};
-use std::hash::{Hash, Hasher};
-use std::ops::Deref;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use alloc::borrow::{Borrow, Cow};
+use core::fmt::{Debug, Display, Formatter, Write};
+use core::hash::{Hash, Hasher};
+use core::ops::Deref;
 
 use arrayvec::ArrayVec;
 use char_str::{CharStr, CharString};
@@ -99,7 +102,7 @@ impl Name {
 }
 
 impl Debug for Name {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "Name({:?})", self.as_str())
     }
 }
@@ -237,8 +240,8 @@ impl FromIterator<char> for Name {
     }
 }
 
-impl std::fmt::Display for Name {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for Name {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str(self.as_str())
     }
 }
@@ -421,7 +424,7 @@ impl<'a> QualifiedName<'a> {
 }
 
 impl Display for QualifiedName<'_> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         let segments = self.segments();
 
         if self.is_unresolved_import() {
@@ -673,7 +676,7 @@ impl<'a> UnqualifiedName<'a> {
 }
 
 impl Display for UnqualifiedName<'_> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         let mut first = true;
         for segment in self.segments() {
             if !first {
@@ -809,7 +812,7 @@ impl Default for SegmentsVec<'_> {
 }
 
 impl Debug for SegmentsVec<'_> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         f.debug_list().entries(self.as_slice()).finish()
     }
 }
@@ -898,7 +901,7 @@ type SegmentsStack<'a> = ArrayVec<&'a str, SMALL_LEN>;
 #[cfg(test)]
 mod tests {
     #[cfg(feature = "salsa")]
-    use std::hash::{DefaultHasher, Hash, Hasher};
+    use core::hash::{DefaultHasher, Hash, Hasher};
 
     use ruff_text_size::TextRange;
 

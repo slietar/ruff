@@ -1,7 +1,11 @@
-use std::borrow::Cow;
-use std::path::Path;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
 
-use rustc_hash::FxHashMap;
+use alloc::borrow::Cow;
+#[cfg(feature = "std")]
+use stdlib::path::Path;
+
+type FxHashMap<K, V> = hashbrown::HashMap<K, V, rustc_hash::FxBuildHasher>;
 
 use ruff_python_trivia::{SimpleTokenKind, SimpleTokenizer, indentation_at_offset};
 use ruff_source_file::LineRanges;
@@ -1000,6 +1004,7 @@ pub fn format_import_from_member(level: u32, module: Option<&str>, member: &str)
 ///
 /// For example, if the package is `foo/bar` and the path is `foo/bar/baz.py`,
 /// the call path is `["baz"]`.
+#[cfg(feature = "std")]
 pub fn to_module_path(package: &Path, path: &Path) -> Option<Vec<String>> {
     path.strip_prefix(package.parent()?)
         .ok()?
@@ -1715,7 +1720,7 @@ pub fn pep_604_union(elts: &[Expr]) -> Expr {
         [rest @ .., elt] => Expr::BinOp(ast::ExprBinOp {
             left: Box::new(pep_604_union(rest)),
             op: Operator::BitOr,
-            right: Box::new(pep_604_union(std::slice::from_ref(elt))),
+            right: Box::new(pep_604_union(core::slice::from_ref(elt))),
             range: TextRange::default(),
             node_index: AtomicNodeIndex::NONE,
         }),
@@ -1847,9 +1852,9 @@ pub fn is_dotted_name(expr: &ast::Expr) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::Cow;
-    use std::cell::RefCell;
-    use std::vec;
+    use alloc::borrow::Cow;
+    use core::cell::RefCell;
+    use alloc::vec;
 
     use ruff_text_size::TextRange;
 

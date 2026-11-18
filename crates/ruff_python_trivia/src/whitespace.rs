@@ -1,4 +1,7 @@
-use std::borrow::Cow;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use alloc::borrow::Cow;
 
 use ruff_source_file::LineRanges;
 use ruff_text_size::{TextRange, TextSize};
@@ -18,7 +21,7 @@ pub fn expand_tabs(source: &str) -> Cow<'_, str> {
         match character {
             '\t' => {
                 let spaces = tab_offset(column, TAB_SIZE);
-                expanded.extend(std::iter::repeat_n(' ', spaces));
+                expanded.extend(core::iter::repeat_n(' ', spaces));
                 column += spaces;
             }
             '\r' | '\n' => {
@@ -125,8 +128,8 @@ impl PythonWhitespace for str {
 
 #[cfg(test)]
 mod tests {
-    use std::assert_matches;
-    use std::borrow::Cow;
+    use core::assert_matches;
+    use alloc::borrow::Cow;
 
     use super::{expand_tabs, tab_offset, tab_offset_u32};
 

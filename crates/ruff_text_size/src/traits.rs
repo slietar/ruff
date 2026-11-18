@@ -1,5 +1,8 @@
-use std::sync::Arc;
-use {crate::TextRange, crate::TextSize, std::convert::TryInto};
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use alloc::sync::Arc;
+use {crate::TextRange, crate::TextSize, core::convert::TryInto};
 
 use priv_in_pub::Sealed;
 mod priv_in_pub {

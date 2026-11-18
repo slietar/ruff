@@ -1,4 +1,7 @@
-use std::iter::FusedIterator;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use core::iter::FusedIterator;
 
 use ruff_text_size::{Ranged, TextRange};
 
@@ -326,10 +329,10 @@ impl Ranged for StringLikePart<'_> {
 /// This is created by the [`StringLike::parts`] method.
 #[derive(Clone)]
 pub enum StringLikePartIter<'a> {
-    String(std::slice::Iter<'a, ast::StringLiteral>),
-    Bytes(std::slice::Iter<'a, ast::BytesLiteral>),
+    String(core::slice::Iter<'a, ast::StringLiteral>),
+    Bytes(core::slice::Iter<'a, ast::BytesLiteral>),
     FString(ast::FStringParts<'a>),
-    TString(std::slice::Iter<'a, ast::TString>),
+    TString(core::slice::Iter<'a, ast::TString>),
 }
 
 impl<'a> Iterator for StringLikePartIter<'a> {

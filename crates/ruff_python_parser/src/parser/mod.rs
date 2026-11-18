@@ -1,6 +1,9 @@
-use std::borrow::Cow;
-use std::cmp::Ordering;
-use std::str::FromStr;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use alloc::borrow::Cow;
+use core::cmp::Ordering;
+use core::str::FromStr;
 
 use bitflags::bitflags;
 use hashbrown::HashSet;
@@ -539,7 +542,7 @@ impl<'src> Parser<'src> {
                         || value.chars().last().is_none_or(is_python_whitespace)
                         || !matches!(chars.peek(), None | Some('\n' | '\r'))
                     {
-                        value.extend(std::iter::repeat_n('?', question_count));
+                        value.extend(core::iter::repeat_n('?', question_count));
                         continue;
                     }
 

@@ -5,9 +5,12 @@
 //! for the `rome.json` configuration file and TypeScript types for the node.js
 //! bindings to the Workspace API
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate::{TextRange, TextSize};
 use schemars::{JsonSchema, Schema, SchemaGenerator};
-use std::borrow::Cow;
+use alloc::borrow::Cow;
 
 impl JsonSchema for TextSize {
     fn schema_name() -> Cow<'static, str> {

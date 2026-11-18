@@ -8,7 +8,7 @@
 //!
 //! However, you should not use this library simply because you work with
 //! strings. In the overwhelming majority of cases, using `usize` and
-//! `std::ops::Range<usize>` is better. In particular, if you are publishing a
+//! `core::ops::Range<usize>` is better. In particular, if you are publishing a
 //! library, using only std types in the interface would make it more
 //! interoperable. Similarly, if you are writing something like a lexer, which
 //! produces, but does not *store* text ranges, then sticking to `usize` would
@@ -18,6 +18,11 @@
 
 #![forbid(unsafe_code)]
 #![warn(missing_debug_implementations, missing_docs)]
+
+#![no_std]
+extern crate alloc;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
 
 mod range;
 mod size;

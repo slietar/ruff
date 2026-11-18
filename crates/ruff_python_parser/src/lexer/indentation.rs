@@ -1,6 +1,9 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use static_assertions::assert_eq_size;
-use std::cmp::Ordering;
-use std::fmt::Debug;
+use core::cmp::Ordering;
+use core::fmt::Debug;
 
 use ruff_python_trivia::tab_offset_u32;
 
@@ -144,7 +147,7 @@ assert_eq_size!(Indentation, u64);
 #[cfg(test)]
 mod tests {
     use super::{Character, Column, Indentation};
-    use std::cmp::Ordering;
+    use core::cmp::Ordering;
 
     #[test]
     fn indentation_try_compare() {

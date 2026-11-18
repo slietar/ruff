@@ -1,14 +1,8 @@
 [package]
 name = "ruff_python_ast"
 version = "0.0.22"
+edition = "2024"
 description = "This is an internal component crate of Ruff"
-authors = { workspace = true }
-edition = { workspace = true }
-rust-version = { workspace = true }
-homepage = { workspace = true }
-documentation = { workspace = true }
-repository = { workspace = true }
-license = { workspace = true }
 
 [package.metadata.cargo-shear]
 # Used via `CacheKey` macro expansion.
@@ -17,41 +11,28 @@ ignored = ["ruff_cache"]
 [lib]
 
 [dependencies]
-ruff_cache = { workspace = true, optional = true }
-ruff_macros = { workspace = true, optional = true }
-ruff_python_trivia = { workspace = true }
-ruff_source_file = { workspace = true }
-ruff_text_size = { workspace = true }
+hashbrown = { version = "0.17.0", default-features = false, features = ["inline-more"] }
+spin = { version = "0.10", default-features = false, features = ["lazy", "once"] }
+ruff_python_trivia = { path = "../ruff_python_trivia" }
+ruff_source_file = { path = "../ruff_source_file" }
+ruff_text_size = { path = "../ruff_text_size" }
 
-aho-corasick = { workspace = true }
-arrayvec = { workspace = true }
-bitflags = { workspace = true }
-char_str = { workspace = true }
-compact_str = { workspace = true }
-get-size2 = { workspace = true, optional = true }
-is-macro = { workspace = true }
-memchr = { workspace = true }
-rustc-hash = { workspace = true }
-salsa = { workspace = true, optional = true }
-schemars = { workspace = true, optional = true }
-serde = { workspace = true, optional = true }
-serde_json = { workspace = true, optional = true }
-thiserror = { workspace = true }
-thin-vec = { workspace = true }
+aho-corasick = { version = "1.1.3", default-features = false, features = ["perf-literal"] }
+arrayvec = { version = "0.7.6", default-features = false, features = [] }
+bitflags = { version = "2.5.0", default-features = false, features = [] }
+char_str = { version = "0.0.4", default-features = false, features = [] }
+compact_str = { version = "0.10.0", default-features = false, features = [] }
+get-size2 = { version = "0.11.0", default-features = false, features = ["alloc", "derive", "compact-str", "hashbrown"], optional = true }
+is-macro = { version = "0.3.5", default-features = false, features = [] }
+memchr = { version = "2.7.1", default-features = false, features = ["alloc"] }
+rustc-hash = { version = "2.0.0", default-features = false, features = [] }
+thiserror = { version = "2.0.0", default-features = false, features = [] }
+thin-vec = { version = "0.2.14", default-features = false, features = [] }
 
 [features]
-schemars = ["dep:schemars", "dep:serde_json"]
-cache = ["dep:ruff_cache", "dep:ruff_macros"]
-serde = [
-    "dep:serde",
-    "ruff_text_size/serde",
-    "dep:ruff_cache",
-    "char_str/serde",
-    "compact_str/serde",
-    "thin-vec/serde",
-]
+std = []
 get-size = ["dep:get-size2", "char_str/get-size", "ruff_text_size/get-size"]
-salsa = ["dep:salsa"]
 
-[lints]
-workspace = true
+[lints.rust]
+# Features whose dependencies were removed in this copy (serde, salsa, ...).
+unexpected_cfgs = "allow"

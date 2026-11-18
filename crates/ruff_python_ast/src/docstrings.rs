@@ -1,5 +1,8 @@
 //! Utilities for parsing Python docstrings.
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 /// Extract the leading whitespace from a line of text within a Python docstring.
 pub fn leading_space(line: &str) -> &str {
     line.find(|char: char| !char.is_whitespace())

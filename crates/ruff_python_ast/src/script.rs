@@ -1,4 +1,7 @@
-use std::sync::LazyLock;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use spin::Lazy as LazyLock;
 
 use memchr::memmem::Finder;
 use ruff_source_file::UniversalNewlineIterator;
@@ -74,7 +77,7 @@ impl ScriptTag {
             return None;
         }
 
-        let contents = std::str::from_utf8(contents).ok()?;
+        let contents = core::str::from_utf8(contents).ok()?;
         let contents = &contents[index..];
 
         let start = TextSize::try_from(index).ok()?;

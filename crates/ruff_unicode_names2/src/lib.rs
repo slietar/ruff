@@ -48,6 +48,11 @@
 #![cfg_attr(test, feature(test))]
 #![deny(missing_docs, unsafe_code)]
 
+#![no_std]
+extern crate alloc;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use core::{char, fmt};
 use generated::{
     MAX_NAME_LENGTH, PHRASEBOOK_OFFSET_SHIFT, PHRASEBOOK_OFFSETS1, PHRASEBOOK_OFFSETS2,
@@ -407,7 +412,7 @@ mod tests {
         distr::{Distribution, StandardUniform},
         prelude::{SeedableRng, StdRng},
     };
-    use std::char;
+    use core::char;
     use std::prelude::v1::*;
 
     extern crate test;

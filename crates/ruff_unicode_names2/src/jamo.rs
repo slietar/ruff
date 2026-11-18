@@ -1,5 +1,8 @@
 //! Algorithmic mapping for hangul syllables.
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 // derived from Jamo.txt
 pub static CHOSEONG: &[&str] = &[
     "G", "GG", "N", "D", "DD", "R", "M", "B", "BB", "S", "SS", "", "J", "JJ", "C", "K", "T", "P",

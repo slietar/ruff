@@ -1,5 +1,16 @@
-use std::ffi::OsStr;
-use std::path::Path;
+#![no_std]
+extern crate alloc;
+// `is_macro` expands to `::std::...` paths, which `core` provides.
+extern crate core as std;
+#[cfg(feature = "std")]
+extern crate std as stdlib;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+#[cfg(feature = "std")]
+use stdlib::ffi::OsStr;
+#[cfg(feature = "std")]
+use stdlib::path::Path;
 
 pub use expression::*;
 pub use generated::*;
@@ -63,6 +74,7 @@ impl Default for SourceType {
     }
 }
 
+#[cfg(feature = "std")]
 impl<P: AsRef<Path>> From<P> for SourceType {
     fn from(path: P) -> Self {
         match path.as_ref().file_name() {
@@ -131,6 +143,7 @@ impl PySourceType {
         Some(ty)
     }
 
+    #[cfg(feature = "std")]
     pub fn try_from_path(path: impl AsRef<Path>) -> Option<Self> {
         path.as_ref()
             .extension()
@@ -155,6 +168,7 @@ impl PySourceType {
     }
 }
 
+#[cfg(feature = "std")]
 impl<P: AsRef<Path>> From<P> for PySourceType {
     fn from(path: P) -> Self {
         Self::try_from_path(path).unwrap_or_default()

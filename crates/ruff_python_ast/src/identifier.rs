@@ -10,6 +10,9 @@
 //!
 //! This module can be used to identify the [`TextRange`] of the `except` token.
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate::{self as ast, Alias, ExceptHandler, Parameter, ParameterWithDefault, Stmt};
 use ruff_text_size::{Ranged, TextLen, TextRange, TextSize};
 

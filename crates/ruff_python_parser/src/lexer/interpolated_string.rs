@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use ruff_python_ast::StringFlags;
 
 use crate::string::InterpolatedStringKind;

@@ -1,3 +1,8 @@
+#![no_std]
+extern crate alloc;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 mod comment_ranges;
 mod comments;
 mod cursor;

@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate::generated::{
     LEXICON, LEXICON_OFFSETS, LEXICON_ORDERED_LENGTHS, LEXICON_ORDERED_LENGTHS_LEN,
     LEXICON_SHORT_LENGTHS, PHRASEBOOK, PHRASEBOOK_SHORT,

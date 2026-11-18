@@ -1,26 +1,21 @@
 [package]
 name = "ruff_unicode_names2"
 version = "0.0.22"
+edition = "2024"
 description = "This is an internal component crate of Ruff"
-authors = { workspace = true }
-edition = { workspace = true }
-rust-version = { workspace = true }
-homepage = { workspace = true }
-documentation = { workspace = true }
-repository = { workspace = true }
-license = "(MIT OR Apache-2.0) AND Unicode-DFS-2016"
 
 [dependencies]
-phf = { workspace = true }
+phf = { version = "0.14.0", default-features = false, features = [] }
 
 [build-dependencies]
-ruff_unicode_names2_generator = { workspace = true }
-
-[dev-dependencies]
-rand = { workspace = true }
+unicode_names2_generator = { package = "ruff_unicode_names2_generator", path = "../ruff_unicode_names2_generator" }
 
 [lib]
 name = "unicode_names2"
 # Upstream unit tests, benchmarks, and macro doctests require nightly Rust.
 test = false
 bench = false
+
+[lints.rust]
+# Features whose dependencies were removed in this copy (serde, salsa, ...).
+unexpected_cfgs = "allow"

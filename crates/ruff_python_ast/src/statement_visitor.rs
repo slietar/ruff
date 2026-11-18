@@ -1,5 +1,8 @@
 //! Specialized AST visitor trait and walk functions that only visit statements.
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate::{self as ast, ElifElseClause, ExceptHandler, MatchCase, Stmt};
 
 /// A trait for AST visitors that only need to visit statements.

@@ -1,6 +1,9 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use ruff_text_size::TextSize;
 
-use std::fmt;
+use core::fmt;
 
 /// Enumerations of the valid prefixes a string literal can have.
 ///

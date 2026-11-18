@@ -1,4 +1,7 @@
 //! Utilities for manually traversing a Python AST.
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate::{self as ast, AnyNodeRef, ExceptHandler, Stmt};
 
 /// Given a [`Stmt`] and its parent, return the [`ast::Suite`] that contains the [`Stmt`].
@@ -79,7 +82,7 @@ impl<'a> EnclosingSuite<'a> {
     }
 }
 
-impl std::ops::Deref for EnclosingSuite<'_> {
+impl core::ops::Deref for EnclosingSuite<'_> {
     type Target = [Stmt];
 
     fn deref(&self) -> &Self::Target {

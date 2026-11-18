@@ -1,8 +1,11 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use cmp::Ordering;
 
 use {
     crate::TextSize,
-    std::{
+    core::{
         cmp, fmt,
         ops::{Add, AddAssign, Bound, Index, IndexMut, Range, RangeBounds, Sub, SubAssign},
     },
@@ -312,7 +315,7 @@ impl TextRange {
     ///
     /// ```
     /// # use ruff_text_size::*;
-    /// # use std::cmp::Ordering;
+    /// # use core::cmp::Ordering;
     ///
     /// let a = TextRange::new(0.into(), 3.into());
     /// let b = TextRange::new(4.into(), 5.into());

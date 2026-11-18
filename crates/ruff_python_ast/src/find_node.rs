@@ -1,8 +1,11 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate::AnyNodeRef;
 use crate::visitor::source_order::{SourceOrderVisitor, TraversalSignal, walk_node};
 use ruff_text_size::{Ranged, TextRange};
-use std::fmt;
-use std::fmt::Formatter;
+use core::fmt;
+use core::fmt::Formatter;
 
 /// Returns the node with a minimal range that fully contains `range`.
 ///

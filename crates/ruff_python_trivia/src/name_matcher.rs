@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use memchr::memmem::Finder;
 use unicode_normalization::is_nfkc;
 
@@ -10,7 +13,7 @@ use unicode_normalization::is_nfkc;
 /// spelling instead. Callers should validate candidates using the AST or semantic analysis.
 ///
 /// Construct a matcher once and reuse it across sources to avoid preprocessing
-/// the name for each source. Cache matchers for fixed names in a [`std::sync::LazyLock`].
+/// the name for each source. Cache matchers for fixed names in a [`alloc::sync::LazyLock`].
 #[derive(Debug, Clone)]
 pub struct NameMatcher<'a> {
     finder: Finder<'a>,

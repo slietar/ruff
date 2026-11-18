@@ -6,7 +6,10 @@
 //!
 //! [Lexical analysis]: https://docs.python.org/3/reference/lexical_analysis.html
 
-use std::cmp::Ordering;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use core::cmp::Ordering;
 
 use unicode_ident::{is_xid_continue, is_xid_start};
 
@@ -1004,7 +1007,7 @@ impl<'src> Lexer<'src> {
     fn lex_number_radix(&mut self, radix: Radix) -> TokenKind {
         #[cfg(debug_assertions)]
         {
-            use std::debug_assert_matches;
+            use core::debug_assert_matches;
             debug_assert_matches!(self.cursor.previous().to_ascii_lowercase(), 'x' | 'o' | 'b');
         }
 
@@ -1683,7 +1686,7 @@ impl KeywordTable {
 
 #[cfg(test)]
 mod tests {
-    use std::fmt::Write;
+    use core::fmt::Write;
 
     use insta::assert_snapshot;
     use ruff_python_ast::token::Token;
@@ -1736,8 +1739,8 @@ mod tests {
         errors: Vec<LexicalError>,
     }
 
-    impl std::fmt::Display for LexerOutput {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    impl core::fmt::Display for LexerOutput {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             writeln!(f, "## Tokens")?;
             writeln!(f, "```\n{:#?}\n```", self.tokens)?;
             if !self.errors.is_empty() {

@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use ruff_python_ast::token::TokenKind;
 
 use super::{ASCII_IDENTIFIER_CONTINUE, KeywordTable, is_ascii_identifier_start};

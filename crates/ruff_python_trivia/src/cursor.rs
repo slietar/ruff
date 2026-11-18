@@ -1,4 +1,7 @@
-use std::str::Chars;
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
+use core::str::Chars;
 
 use ruff_text_size::{TextLen, TextSize};
 

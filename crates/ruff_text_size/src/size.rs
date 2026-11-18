@@ -1,6 +1,9 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use {
     crate::TextLen,
-    std::{
+    core::{
         convert::TryFrom,
         fmt, iter,
         num::TryFromIntError,

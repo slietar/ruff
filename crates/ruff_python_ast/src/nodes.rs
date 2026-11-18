@@ -1,17 +1,50 @@
 #![allow(clippy::derive_partial_eq_without_eq)]
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate::AtomicNodeIndex;
 use crate::generated::{
     ExprBytesLiteral, ExprCall, ExprCompare, ExprDict, ExprFString, ExprList, ExprName, ExprSet,
     ExprStringLiteral, ExprTString, ExprTuple, PatternMatchAs, PatternMatchOr, StmtClassDef,
 };
-use std::borrow::Cow;
-use std::fmt;
-use std::fmt::Debug;
-use std::iter::{FusedIterator, Once};
-use std::ops::{Deref, DerefMut};
-use std::slice::{Iter, IterMut};
-use std::sync::OnceLock;
+use alloc::borrow::Cow;
+use core::fmt;
+use core::fmt::Debug;
+use core::iter::{FusedIterator, Once};
+use core::ops::{Deref, DerefMut};
+use core::slice::{Iter, IterMut};
+
+/// A minimal `std::sync::OnceLock` replacement built on `spin::Once`.
+#[derive(Default)]
+struct OnceLock<T>(spin::Once<T>);
+
+impl<T> OnceLock<T> {
+    const fn new() -> Self {
+        Self(spin::Once::new())
+    }
+
+    fn get_or_init(&self, f: impl FnOnce() -> T) -> &T {
+        self.0.call_once(f)
+    }
+}
+
+impl<T: Clone> Clone for OnceLock<T> {
+    fn clone(&self) -> Self {
+        match self.0.get() {
+            Some(value) => Self(spin::Once::initialized(value.clone())),
+            None => Self::new(),
+        }
+    }
+}
+
+#[cfg(feature = "get-size")]
+impl<T: get_size2::GetSize> get_size2::GetSize for OnceLock<T> {
+    fn get_heap_size(&self) -> usize {
+        self.0.get().map_or(0, get_size2::GetSize::get_heap_size)
+    }
+}
+
 
 use bitflags::bitflags;
 use thin_vec::ThinVec;
@@ -263,7 +296,7 @@ impl ExprDict {
         self.items[n].value()
     }
 
-    pub fn iter(&self) -> std::slice::Iter<'_, DictItem> {
+    pub fn iter(&self) -> core::slice::Iter<'_, DictItem> {
         self.items.iter()
     }
 
@@ -277,7 +310,7 @@ impl ExprDict {
 }
 
 impl<'a> IntoIterator for &'a ExprDict {
-    type IntoIter = std::slice::Iter<'a, DictItem>;
+    type IntoIter = core::slice::Iter<'a, DictItem>;
     type Item = &'a DictItem;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -370,7 +403,7 @@ impl FusedIterator for DictValueIterator<'_> {}
 impl ExactSizeIterator for DictValueIterator<'_> {}
 
 impl ExprSet {
-    pub fn iter(&self) -> std::slice::Iter<'_, Expr> {
+    pub fn iter(&self) -> core::slice::Iter<'_, Expr> {
         self.elts.iter()
     }
 
@@ -384,7 +417,7 @@ impl ExprSet {
 }
 
 impl<'a> IntoIterator for &'a ExprSet {
-    type IntoIter = std::slice::Iter<'a, Expr>;
+    type IntoIter = core::slice::Iter<'a, Expr>;
     type Item = &'a Expr;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -482,8 +515,8 @@ pub struct DebugText {
     expression_end: u32,
 }
 
-impl std::fmt::Debug for DebugText {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Debug for DebugText {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("DebugText")
             .field("leading", &self.leading())
             .field("expression", &self.expression())
@@ -581,7 +614,7 @@ impl FStringValue {
     /// Returns an iterator over the parts of this f-string, in source order.
     pub fn iter(&self) -> FStringParts<'_> {
         match &self.inner {
-            FStringValueInner::Single(fstring) => FStringParts::Single(std::iter::once(fstring)),
+            FStringValueInner::Single(fstring) => FStringParts::Single(core::iter::once(fstring)),
             FStringValueInner::Concatenated(parts) => FStringParts::Concatenated(parts.iter()),
         }
     }
@@ -589,7 +622,7 @@ impl FStringValue {
     /// Returns a mutable iterator over the parts of this f-string, in source order.
     pub fn iter_mut(&mut self) -> FStringPartsMut<'_> {
         match &mut self.inner {
-            FStringValueInner::Single(fstring) => FStringPartsMut::Single(std::iter::once(fstring)),
+            FStringValueInner::Single(fstring) => FStringPartsMut::Single(core::iter::once(fstring)),
             FStringValueInner::Concatenated(parts) => {
                 FStringPartsMut::Concatenated(parts.iter_mut())
             }
@@ -886,7 +919,7 @@ impl TStringValue {
     /// Returns a slice of all the [`TString`]s contained in this value.
     pub fn as_slice(&self) -> &[TString] {
         match &self.inner {
-            TStringValueInner::Single(part) => std::slice::from_ref(part),
+            TStringValueInner::Single(part) => core::slice::from_ref(part),
             TStringValueInner::Concatenated(parts) => parts,
         }
     }
@@ -894,7 +927,7 @@ impl TStringValue {
     /// Returns a mutable slice of all the [`TString`]s contained in this value.
     fn as_mut_slice(&mut self) -> &mut [TString] {
         match &mut self.inner {
-            TStringValueInner::Single(part) => std::slice::from_mut(part),
+            TStringValueInner::Single(part) => core::slice::from_mut(part),
             TStringValueInner::Concatenated(parts) => parts,
         }
     }
@@ -1044,7 +1077,7 @@ pub struct DisplayFlags<'a> {
     contents: &'a str,
 }
 
-impl std::fmt::Display for DisplayFlags<'_> {
+impl core::fmt::Display for DisplayFlags<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -1593,7 +1626,7 @@ impl StringLiteralValue {
     /// Returns a slice of all the [`StringLiteral`] parts contained in this value.
     pub fn as_slice(&self) -> &[StringLiteral] {
         match &self.inner {
-            StringLiteralValueInner::Single(value) => std::slice::from_ref(value),
+            StringLiteralValueInner::Single(value) => core::slice::from_ref(value),
             StringLiteralValueInner::Concatenated(value) => value.strings.as_slice(),
         }
     }
@@ -1601,7 +1634,7 @@ impl StringLiteralValue {
     /// Returns a mutable slice of all the [`StringLiteral`] parts contained in this value.
     fn as_mut_slice(&mut self) -> &mut [StringLiteral] {
         match &mut self.inner {
-            StringLiteralValueInner::Single(value) => std::slice::from_mut(value),
+            StringLiteralValueInner::Single(value) => core::slice::from_mut(value),
             StringLiteralValueInner::Concatenated(value) => value.strings.as_mut_slice(),
         }
     }
@@ -2040,7 +2073,7 @@ impl BytesLiteralValue {
     /// Returns a slice of all the [`BytesLiteral`] parts contained in this value.
     pub fn as_slice(&self) -> &[BytesLiteral] {
         match &self.inner {
-            BytesLiteralValueInner::Single(value) => std::slice::from_ref(value),
+            BytesLiteralValueInner::Single(value) => core::slice::from_ref(value),
             BytesLiteralValueInner::Concatenated(value) => value.as_slice(),
         }
     }
@@ -2048,7 +2081,7 @@ impl BytesLiteralValue {
     /// Returns a mutable slice of all the [`BytesLiteral`] parts contained in this value.
     fn as_mut_slice(&mut self) -> &mut [BytesLiteral] {
         match &mut self.inner {
-            BytesLiteralValueInner::Single(value) => std::slice::from_mut(value),
+            BytesLiteralValueInner::Single(value) => core::slice::from_mut(value),
             BytesLiteralValueInner::Concatenated(value) => value.as_mut_slice(),
         }
     }
@@ -2715,7 +2748,7 @@ impl ExprName {
 }
 
 impl ExprList {
-    pub fn iter(&self) -> std::slice::Iter<'_, Expr> {
+    pub fn iter(&self) -> core::slice::Iter<'_, Expr> {
         self.elts.iter()
     }
 
@@ -2729,7 +2762,7 @@ impl ExprList {
 }
 
 impl<'a> IntoIterator for &'a ExprList {
-    type IntoIter = std::slice::Iter<'a, Expr>;
+    type IntoIter = core::slice::Iter<'a, Expr>;
     type Item = &'a Expr;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -2738,7 +2771,7 @@ impl<'a> IntoIterator for &'a ExprList {
 }
 
 impl ExprTuple {
-    pub fn iter(&self) -> std::slice::Iter<'_, Expr> {
+    pub fn iter(&self) -> core::slice::Iter<'_, Expr> {
         self.elts.iter()
     }
 
@@ -2752,7 +2785,7 @@ impl ExprTuple {
 }
 
 impl<'a> IntoIterator for &'a ExprTuple {
-    type IntoIter = std::slice::Iter<'a, Expr>;
+    type IntoIter = core::slice::Iter<'a, Expr>;
     type Item = &'a Expr;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -3894,7 +3927,7 @@ impl Deref for TypeParams {
 
 impl<'a> IntoIterator for &'a TypeParams {
     type Item = &'a TypeParam;
-    type IntoIter = std::slice::Iter<'a, TypeParam>;
+    type IntoIter = core::slice::Iter<'a, TypeParam>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.type_params.iter()
@@ -4057,7 +4090,7 @@ impl PartialEq<String> for Identifier {
     }
 }
 
-impl std::ops::Deref for Identifier {
+impl core::ops::Deref for Identifier {
     type Target = str;
     #[inline]
     fn deref(&self) -> &Self::Target {
@@ -4072,9 +4105,9 @@ impl AsRef<str> for Identifier {
     }
 }
 
-impl std::fmt::Display for Identifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(&self.id, f)
+impl core::fmt::Display for Identifier {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::Display::fmt(&self.id, f)
     }
 }
 
@@ -4176,47 +4209,47 @@ mod tests {
     #[test]
     #[cfg(target_pointer_width = "64")]
     fn size() {
-        assert_eq!(std::mem::size_of::<Stmt>(), 88);
-        assert_eq!(std::mem::size_of::<StmtFunctionDef>(), 88);
-        assert_eq!(std::mem::size_of::<StmtClassDef>(), 80);
-        assert_eq!(std::mem::size_of::<StmtTry>(), 64);
-        assert_eq!(std::mem::size_of::<Mod>(), 32);
-        assert_eq!(std::mem::size_of::<Pattern>(), 72);
-        assert_eq!(std::mem::size_of::<Parameters>(), 56);
-        assert_eq!(std::mem::size_of::<Arguments>(), 32);
-        assert_eq!(std::mem::size_of::<Expr>(), 56);
-        assert_eq!(std::mem::size_of::<ExprAttribute>(), 56);
-        assert_eq!(std::mem::size_of::<ExprAwait>(), 24);
-        assert_eq!(std::mem::size_of::<ExprBinOp>(), 32);
-        assert_eq!(std::mem::size_of::<ExprBoolOp>(), 40);
-        assert_eq!(std::mem::size_of::<ExprBooleanLiteral>(), 16);
-        assert_eq!(std::mem::size_of::<ExprBytesLiteral>(), 48);
-        assert_eq!(std::mem::size_of::<ExprCall>(), 48);
-        assert_eq!(std::mem::size_of::<ExprCompare>(), 48);
-        assert_eq!(std::mem::size_of::<ExprDict>(), 40);
-        assert_eq!(std::mem::size_of::<ExprDictComp>(), 48);
-        assert_eq!(std::mem::size_of::<ExprEllipsisLiteral>(), 12);
-        assert_eq!(std::mem::size_of::<ExprFString>(), 48);
-        assert_eq!(std::mem::size_of::<ExprGenerator>(), 48);
-        assert_eq!(std::mem::size_of::<ExprIf>(), 40);
-        assert_eq!(std::mem::size_of::<ExprIpyEscapeCommand>(), 32);
-        assert_eq!(std::mem::size_of::<ExprLambda>(), 32);
-        assert_eq!(std::mem::size_of::<ExprList>(), 40);
-        assert_eq!(std::mem::size_of::<ExprListComp>(), 48);
-        assert_eq!(std::mem::size_of::<ExprName>(), 32);
-        assert_eq!(std::mem::size_of::<ExprNamed>(), 32);
-        assert_eq!(std::mem::size_of::<ExprNoneLiteral>(), 12);
-        assert_eq!(std::mem::size_of::<ExprNumberLiteral>(), 40);
-        assert_eq!(std::mem::size_of::<ExprSet>(), 40);
-        assert_eq!(std::mem::size_of::<ExprSetComp>(), 48);
-        assert_eq!(std::mem::size_of::<ExprSlice>(), 40);
-        assert_eq!(std::mem::size_of::<ExprStarred>(), 24);
-        assert_eq!(std::mem::size_of::<ExprStringLiteral>(), 48);
-        assert_eq!(std::mem::size_of::<ExprSubscript>(), 32);
-        assert_eq!(std::mem::size_of::<ExprTString>(), 48);
-        assert_eq!(std::mem::size_of::<ExprTuple>(), 40);
-        assert_eq!(std::mem::size_of::<ExprUnaryOp>(), 24);
-        assert_eq!(std::mem::size_of::<ExprYield>(), 24);
-        assert_eq!(std::mem::size_of::<ExprYieldFrom>(), 24);
+        assert_eq!(core::mem::size_of::<Stmt>(), 88);
+        assert_eq!(core::mem::size_of::<StmtFunctionDef>(), 88);
+        assert_eq!(core::mem::size_of::<StmtClassDef>(), 80);
+        assert_eq!(core::mem::size_of::<StmtTry>(), 64);
+        assert_eq!(core::mem::size_of::<Mod>(), 32);
+        assert_eq!(core::mem::size_of::<Pattern>(), 72);
+        assert_eq!(core::mem::size_of::<Parameters>(), 56);
+        assert_eq!(core::mem::size_of::<Arguments>(), 32);
+        assert_eq!(core::mem::size_of::<Expr>(), 56);
+        assert_eq!(core::mem::size_of::<ExprAttribute>(), 56);
+        assert_eq!(core::mem::size_of::<ExprAwait>(), 24);
+        assert_eq!(core::mem::size_of::<ExprBinOp>(), 32);
+        assert_eq!(core::mem::size_of::<ExprBoolOp>(), 40);
+        assert_eq!(core::mem::size_of::<ExprBooleanLiteral>(), 16);
+        assert_eq!(core::mem::size_of::<ExprBytesLiteral>(), 48);
+        assert_eq!(core::mem::size_of::<ExprCall>(), 48);
+        assert_eq!(core::mem::size_of::<ExprCompare>(), 48);
+        assert_eq!(core::mem::size_of::<ExprDict>(), 40);
+        assert_eq!(core::mem::size_of::<ExprDictComp>(), 48);
+        assert_eq!(core::mem::size_of::<ExprEllipsisLiteral>(), 12);
+        assert_eq!(core::mem::size_of::<ExprFString>(), 48);
+        assert_eq!(core::mem::size_of::<ExprGenerator>(), 48);
+        assert_eq!(core::mem::size_of::<ExprIf>(), 40);
+        assert_eq!(core::mem::size_of::<ExprIpyEscapeCommand>(), 32);
+        assert_eq!(core::mem::size_of::<ExprLambda>(), 32);
+        assert_eq!(core::mem::size_of::<ExprList>(), 40);
+        assert_eq!(core::mem::size_of::<ExprListComp>(), 48);
+        assert_eq!(core::mem::size_of::<ExprName>(), 32);
+        assert_eq!(core::mem::size_of::<ExprNamed>(), 32);
+        assert_eq!(core::mem::size_of::<ExprNoneLiteral>(), 12);
+        assert_eq!(core::mem::size_of::<ExprNumberLiteral>(), 40);
+        assert_eq!(core::mem::size_of::<ExprSet>(), 40);
+        assert_eq!(core::mem::size_of::<ExprSetComp>(), 48);
+        assert_eq!(core::mem::size_of::<ExprSlice>(), 40);
+        assert_eq!(core::mem::size_of::<ExprStarred>(), 24);
+        assert_eq!(core::mem::size_of::<ExprStringLiteral>(), 48);
+        assert_eq!(core::mem::size_of::<ExprSubscript>(), 32);
+        assert_eq!(core::mem::size_of::<ExprTString>(), 48);
+        assert_eq!(core::mem::size_of::<ExprTuple>(), 40);
+        assert_eq!(core::mem::size_of::<ExprUnaryOp>(), 24);
+        assert_eq!(core::mem::size_of::<ExprYield>(), 24);
+        assert_eq!(core::mem::size_of::<ExprYieldFrom>(), 24);
     }
 }

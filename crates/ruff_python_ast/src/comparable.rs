@@ -14,12 +14,15 @@
 //! an implicit concatenation of string literals, as these expressions are considered to
 //! have the same shape in that they evaluate to the same value.
 
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate as ast;
 use crate::{Expr, Number};
-use std::borrow::Cow;
-use std::fmt;
-use std::hash::{Hash, Hasher};
-use std::marker::PhantomData;
+use alloc::borrow::Cow;
+use core::fmt;
+use core::hash::{Hash, Hasher};
+use core::marker::PhantomData;
 
 /// Use `compare_enum!(Wrapper(AstEnum) { ... })` to compare borrowed AST nodes
 /// by their structural fields. Listing the fields once keeps the wrapper's
@@ -59,7 +62,7 @@ macro_rules! compare_enum {
 
         impl Hash for $key<'_> {
             fn hash<H: Hasher>(&self, state: &mut H) {
-                std::mem::discriminant::<ast::$ast>(&self.0).hash(state);
+                core::mem::discriminant::<ast::$ast>(&self.0).hash(state);
                 match self.0 {
                     $(
                         $(ast::$ast::$variant(node) => $fields(node).hash(state),)?
@@ -362,7 +365,7 @@ impl Eq for ComparableNumber<'_> {}
 
 impl Hash for ComparableNumber<'_> {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        std::mem::discriminant(self.0).hash(state);
+        core::mem::discriminant(self.0).hash(state);
         match self.0 {
             ast::Number::Int(value) => value.hash(state),
             ast::Number::Float(value) => value.to_bits().hash(state),
@@ -645,7 +648,7 @@ impl<'a> ComparableInterpolatedString<'a> {
     /// [CPython's `string.templatelib.Template`]: https://github.com/python/cpython/blob/c91ad5da9d92eac4718e4da8d53689c3cc24535e/Python/codegen.c#L4052-L4103
     fn normalized_elements(self) -> impl Iterator<Item = ComparableStringElement<'a>> {
         let mut raw = self.raw_elements().peekable();
-        std::iter::from_fn(move || {
+        core::iter::from_fn(move || {
             loop {
                 match raw.next()? {
                     element @ ComparableStringElement::Interpolation(_) => {
@@ -677,7 +680,7 @@ impl<'a> ComparableInterpolatedString<'a> {
     fn raw_elements(self) -> impl Iterator<Item = ComparableStringElement<'a>> {
         enum Parts<'a> {
             FString(ast::FStringParts<'a>),
-            TString(std::slice::Iter<'a, ast::TString>),
+            TString(core::slice::Iter<'a, ast::TString>),
         }
 
         let mut parts = match self {
@@ -685,7 +688,7 @@ impl<'a> ComparableInterpolatedString<'a> {
             Self::TString(value) => Parts::TString(value.as_slice().iter()),
         };
         let mut elements = [].iter();
-        std::iter::from_fn(move || {
+        core::iter::from_fn(move || {
             loop {
                 if let Some(element) = elements.next() {
                     return Some(ComparableStringElement::from(element));
@@ -721,7 +724,7 @@ impl<'a> ComparableInterpolatedString<'a> {
 
 impl PartialEq for ComparableInterpolatedString<'_> {
     fn eq(&self, other: &Self) -> bool {
-        std::mem::discriminant(self) == std::mem::discriminant(other)
+        core::mem::discriminant(self) == core::mem::discriminant(other)
             && self.normalized_elements().eq(other.normalized_elements())
     }
 }
@@ -789,7 +792,7 @@ impl Eq for ComparableStringElement<'_> {}
 
 impl Hash for ComparableStringElement<'_> {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        std::mem::discriminant(self).hash(state);
+        core::mem::discriminant(self).hash(state);
         match self {
             Self::Literal(text) => text.hash(state),
             Self::Interpolation(interpolation) => interpolation_fields(interpolation).hash(state),

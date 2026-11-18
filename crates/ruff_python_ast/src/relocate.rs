@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use ruff_text_size::TextRange;
 
 use crate::visitor::transformer::{Transformer, walk_expr, walk_keyword};

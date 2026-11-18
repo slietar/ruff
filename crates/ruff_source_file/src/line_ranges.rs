@@ -1,7 +1,10 @@
+#[allow(unused_imports)]
+use alloc::{borrow::ToOwned, boxed::Box, format, string::{String, ToString}, vec, vec::Vec};
+
 use crate::find_newline;
 use memchr::{memchr2, memrchr2};
 use ruff_text_size::{TextLen, TextRange, TextSize};
-use std::ops::Add;
+use core::ops::Add;
 
 /// Extension trait for [`str`] that provides methods for working with ranges of lines.
 pub trait LineRanges {
